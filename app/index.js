@@ -1,56 +1,56 @@
-import React from 'react'
-import { ScrollView, View, Text, Image } from 'react-native'
-import { StatusBar } from 'expo-status-bar'
-import { Redirect, router } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
-// import CustomButton from "../components/CustomButton"
+// App.js
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, FlatList, Alert, Image } from 'react-native';
+import Product from '../components/Product';
 
-// import { images } from '../constants'
+const App = () => {
+  const [products, setProducts] = useState([]);
+  const [name, setName] = useState('');
+  const [photo, setPhoto] = useState('');
+  const [price, setPrice] = useState('');
 
+  const addProduct = () => {
+    if (products.length >= 5) {
+      Alert.alert('Limit Reached', 'You can only add up to 5 products.');
+      return;
+    }
 
-export default function App() {
-	return (
-		<>
-			<SafeAreaView className="bg-primary h-full">
-				<ScrollView contentContainerStyle={{ height: '100%' }}>
-					<View className="w-full justify-center items-center min-h-[85vh] px-4">
-						{/*<Image 
-							source={images.logo}
-							className="w-[130px] h-[84px]"
-							resizeMode="contain"
-						/>*/}
+    setProducts([...products, { name, photo, price }]);
+    setName('');
+    setPhoto('');
+    setPrice('');
+  };
 
-						{/*<Image
-							source={images.cards}
-							className="max-w-[380px] w-full h-[300px]"
-							resizeMode="contain"
-						/>*/}
+  return (
+    <View className='flex-1 p-4 bg-gray-100'>
+      <TextInput
+        className='border p-2 mb-2'
+        placeholder="Product Name"
+        value={name}
+        onChangeText={setName}
+      />
+      <TextInput
+        className='border p-2 mb-2'
+        placeholder="Product Photo URL"
+        value={photo}
+        onChangeText={setPhoto}
+      />
+      <TextInput
+        className='border p-2 mb-2'
+        placeholder="Product Price"
+        value={price}
+        onChangeText={setPrice}
+        keyboardType="numeric"
+      />
+      <Button title="Add Product" onPress={addProduct} />
+      <FlatList
+        data={products}
+        renderItem={({ item }) => <Product name={item.name} photo={item.photo} price={item.price} />}
+        keyExtractor={(item, index) => index.toString()}
+        className='mt-4'
+      />
+    </View>
+  );
+};
 
-						<View className="relative mt-5">
-							<Text className="text-3xl text-white font-bold text-center">Discover Endless Possibilities with {' '}</Text>
-							<Text className="text-secondary-200">Aora</Text>
-
-							{/*<Image
-								source={images.path}
-								className="w-[136px] h-[15px] absolute-bottom-2 -right-8"
-								resizeMode="contain"
-							/>*/}
-						</View>
-
-						<Text className="text-sm font-pregular text-gray-100 mt-7 text-center">
-							Where creativity meets innovation: embark on a journey of limitless exploration with Aora
-						</Text>
-
-						{/*<CustomButton 
-							title="Continue with Email"
-							handlePress={() => router.push('/sign-in')}
-							containerStyles="w-full mt-7"
-						/>*/}
-					</View>
-				</ScrollView>
-
-				<StatusBar backgounColor="#161622" style="light" />
-			</SafeAreaView>
-		</>
-	)
-}
+export default App;
