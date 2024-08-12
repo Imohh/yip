@@ -1,6 +1,6 @@
 // App.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, TouchableOpacity, Alert, Image } from 'react-native';
+import { ScrollView, View, Text, TextInput, Button, FlatList, TouchableOpacity, Alert, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Product from '../components/Product';
 import logo from "../assets/images/logo.png";
@@ -27,6 +27,11 @@ const App = () => {
   };
 
   const addProduct = () => {
+  	if (!name || !photo || !price) {
+      Alert.alert('Missing Information', 'Please fill out all fields before adding the product.');
+      return;
+    }
+
     if (products.length >= 5) {
       Alert.alert('Limit Reached', 'You can only add up to 5 products.');
       return;
@@ -40,7 +45,7 @@ const App = () => {
 
 
   return (
-    <View className='flex-1 p-4 bg-gray-100 mt-10'>
+    <ScrollView className='flex-1 p-4 bg-gray-100 mt-10'>
     	<View className="flex items-center justify-center">
     		<Image 
 				source={logo}
@@ -74,17 +79,20 @@ const App = () => {
       )}
 	  <Text className="mb-2 font-semibold capitalize">Product price*</Text>
       <TextInput
-        className='border border-slate-800 rounded p-4 mb-2'
-        placeholder="Enter product price"
-        value={price}
-        onChangeText={setPrice}
-        keyboardType="numeric"
-      />
+	    className='border border-slate-800 rounded p-4 mb-2'
+	    placeholder="Enter product price"
+	    value={price}
+	    onChangeText={(text) => {
+	      const formattedText = text.replace(/^0+/, '');
+	      setPrice(formattedText);
+	    }}
+	    keyboardType="numeric"
+  	  />
       {/*<Button title="Add Product" onPress={addProduct} />*/}
       <TouchableOpacity className="border rounded mt-2">
       	<Text className="capitalize p-4 bg-black text-white text-center font-semibold" onPress={addProduct}>add product</Text>
       </TouchableOpacity>
-      <FlatList
+      {/*<FlatList
         data={products}
         renderItem={({ item }) => (
         	<>
@@ -98,8 +106,17 @@ const App = () => {
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}
         className='mt-4'
-      />
-    </View>
+      />*/}
+      <ScrollView className='mt-4'>
+		  <View className="flex flex-wrap flex-row">
+		    {products.map((item, index) => (
+		      <View key={index.toString()} className="w-1/2 p-2">
+		        <Product name={item.name} photo={item.photo} price={item.price} />
+		      </View>
+		    ))}
+		  </View>
+	  </ScrollView>
+    </ScrollView>
   );
 };
 
